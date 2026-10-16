@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#090d18"><title>Quotex AI Signal — Live & Demo</title>
+<style>
+:root{color-scheme:dark;--bg:#090d18;--panel:#121a2a;--line:#243149;--muted:#9aa9c2;--green:#35dfa0;--red:#ff647c;--gold:#ffd479}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at top,#172442 0,#090d18 55%);color:#f4f7ff;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;padding:env(safe-area-inset-top) 14px calc(24px + env(safe-area-inset-bottom));max-width:720px;margin-inline:auto}
+header{display:flex;align-items:center;justify-content:space-between;padding:18px 2px 16px}.brand{font-weight:850;font-size:18px}.brand span{color:var(--green)}.pill{font-size:10px;background:#23334a;color:#c6d5ee;padding:6px 9px;border-radius:99px}
+h1{font-size:25px;line-height:1.2;margin:8px 0}.sub{color:var(--muted);font-size:13px;line-height:1.5;margin-bottom:18px}
+.panel{background:linear-gradient(145deg,#151f32,#101725);border:1px solid var(--line);border-radius:18px;padding:16px;margin:12px 0;box-shadow:0 8px 24px #0002}.controls{display:grid;grid-template-columns:1fr 1fr;gap:10px}.label{font-size:12px;color:var(--muted);display:block;margin-bottom:8px}.control select{width:100%;background:#0b1220;border:1px solid #2b3b55;color:#f5f7ff;border-radius:11px;padding:12px;font-size:14px}
+button{border:0;border-radius:12px;padding:13px 15px;font-size:14px;font-weight:750;cursor:pointer}.primary{background:var(--green);color:#062016;width:100%;margin-top:12px}.secondary{background:#24334c;color:#eef3ff}.signal-top{display:flex;justify-content:space-between;align-items:center}.muted{color:var(--muted);font-size:12px}.signal{font-size:28px;font-weight:900;margin:12px 0 5px}.call{color:var(--green)}.put{color:var(--red)}.wait{color:var(--gold)}.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px}.stat{background:#0b1220;border:1px solid #202d42;border-radius:12px;padding:11px 8px}.stat b{display:block;font-size:16px;margin-top:5px;overflow-wrap:anywhere}.stat small{font-size:10px;color:var(--muted)}.section-title{font-size:16px;font-weight:800;margin:0 0 12px}.history-item{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 0;border-bottom:1px solid #263147}.history-item:last-child{border-bottom:0}.history-item b{font-size:13px}.history-item small{display:block;color:var(--muted);font-size:11px;margin-top:4px}.tag{font-size:11px;font-weight:800;padding:6px 8px;border-radius:8px}.tag.call{background:#123b30}.tag.put{background:#421f2a}.tag.wait{background:#40351d}.note{font-size:11px;color:var(--muted);line-height:1.6}.foot{font-size:10px;color:#71819d;text-align:center;line-height:1.6;padding:12px 4px 4px}.banner{background:#2d2717;color:#ffdf91;border:1px solid #594a27;border-radius:12px;padding:11px;font-size:12px;line-height:1.5;margin-top:10px}.ok{color:var(--green)}.bad{color:var(--red)}
+@media(min-width:560px){body{padding-left:22px;padding-right:22px}.panel{padding:20px}}
+</style></head><body>
+<header><div class="brand">QUOTEX <span>AI SIGNAL</span></div><div class="pill" id="modePill">DEMO MODE</div></header>
+<h1>Live Signal Dashboard</h1><div class="sub">RSI + EMA rule analysis with a clear feed status. Signals only — no automatic trading.</div>
+<div class="panel"><div class="controls">
+<div class="control"><label class="label" for="dataMode">Data mode</label><select id="dataMode"><option value="live">Live data (supported crypto)</option><option value="demo">Demo simulation</option></select></div>
+<div class="control"><label class="label" for="market">Market type</label><select id="market"><option value="normal">Normal market</option><option value="otc">OTC market (demo only)</option></select></div>
+<div class="control"><label class="label" for="pair">Asset</label><select id="pair"><option value="BTCUSDT">BTC / USDT (Live)</option><option value="ETHUSDT">ETH / USDT (Live)</option><option value="EURUSD">EUR / USD (requires FX feed)</option><option value="GBPUSD">GBP / USD (requires FX feed)</option></select></div>
+<div class="control"><label class="label" for="interval">Candle timeframe</label><select id="interval"><option value="1m">1 minute</option><option value="5m">5 minutes</option><option value="15m">15 minutes</option><option value="1h">1 hour</option></select></div>
+<div class="control"><label class="label" for="rsiMode">RSI period</label><select id="rsiMode"><option value="14">14 periods</option><option value="9">9 periods</option><option value="21">21 periods</option></select></div>
+<div class="control"><label class="label" for="emaMode">EMA pair</label><select id="emaMode"><option value="9,21">EMA 9 / 21</option><option value="5,20">EMA 5 / 20</option><option value="12,26">EMA 12 / 26</option></select></div>
+</div><button class="primary" id="generate">↻ Fetch data & analyse</button><div class="banner" id="feedStatus">Ready. Live mode uses public Binance candle data for BTC/USDT and ETH/USDT. Forex and Quotex OTC data are not connected.</div></div>
+<div class="panel"><div class="signal-top"><div class="muted">LATEST SIGNAL</div><div class="pill" id="status">NOT ANALYSED</div></div><div class="signal wait" id="signal">WAIT</div><div class="muted" id="signalMeta">Choose settings and tap “Fetch data & analyse”.</div>
+<div class="stats"><div class="stat"><small>RSI</small><b id="rsi">—</b></div><div class="stat"><small>EMA Trend</small><b id="trend">—</b></div><div class="stat"><small>Rule score*</small><b id="confidence">—</b></div></div></div>
+<div class="panel"><div class="section-title">Signal History</div><div id="history" class="muted">No signals yet.</div><button class="secondary" id="clear" style="width:100%;margin-top:12px">Clear history</button></div>
+<div class="foot">*Rule score is not a probability of winning. Live crypto candles are public exchange data and may differ from Quotex prices. Forex requires a configured market-data provider; OTC prices require an authorized matching source. No guaranteed accuracy. This app does not connect to your Quotex account or place trades.</div>
+<script>
+const $=id=>document.getElementById(id);let history=[];
+function ema(values,period){let k=2/(period+1),v=values[0];const out=[v];for(let i=1;i<values.length;i++){v=values[i]*k+v*(1-k);out.push(v)}return out}
+function rsi(values,period){if(values.length<period+1)return null;let gain=0,loss=0;for(let i=1;i<=period;i++){let d=values[i]-values[i-1];if(d>0)gain+=d;else loss-=d}gain/=period;loss/=period;for(let i=period+1;i<values.length;i++){let d=values[i]-values[i-1];gain=(gain*(period-1)+Math.max(d,0))/period;loss=(loss*(period-1)+Math.max(-d,0))/period}if(loss===0)return 100;return 100-100/(1+gain/loss)}
+function show(side,cls,details,r,trend,score){
+ $('signal').className='signal '+cls;$('signal').textContent=side;$('status').textContent=$('dataMode').value.toUpperCase()+' · '+$('market').value.toUpperCase();
+ $('signalMeta').textContent=details;$('rsi').textContent=r==null?'—':r.toFixed(1);$('trend').textContent=trend;$('confidence').textContent=score==null?'—':score+'/2';
+ history.unshift({side,cls,details,r,trend,score});history=history.slice(0,15);renderHistory();
+}
+function renderHistory(){if(!history.length){$('history').textContent='No signals yet.';return}$('history').innerHTML=history.map(h=>`<div class="history-item"><div><b>${h.side}</b><small>${h.details} · RSI ${h.r==null?'—':h.r.toFixed(1)} · EMA ${h.trend}</small></div><span class="tag ${h.cls}">${h.score==null?'DEMO':h.score+'/2'}</span></div>`).join('')}
+async function analyse(){
+ const mode=$('dataMode').value,market=$('market').value,pair=$('pair').value,iv=$('interval').value;
+ $('generate').disabled=true;$('generate').textContent='Loading…';$('feedStatus').textContent='Checking selected data source…';
+ try{
+  if(market==='otc'&&mode==='live')throw new Error('Live OTC feed is not connected. Select Demo mode or Normal market.');
+  if(mode==='live'&&market==='normal'&&(pair==='EURUSD'||pair==='GBPUSD'))throw new Error('A live forex provider/API key must be configured before this pair can be analysed.');
+  if(mode==='live'&&market==='normal'){
+   const url=`https://api.binance.com/api/v3/klines?symbol=${pair}&interval=${iv}&limit=100`;
+   const resp=await fetch(url);if(!resp.ok)throw new Error('Live data provider returned HTTP '+resp.status+'. Try again later.');
+   const rows=await resp.json();const closes=rows.map(x=>Number(x[4]));const rp=Number($('rsiMode').value);const [fastN,slowN]=$('emaMode').value.split(',').map(Number);
+   if(closes.length<slowN+2)throw new Error('Not enough candles received.');
+   const rv=rsi(closes,rp),ef=ema(closes,fastN),es=ema(closes,slowN),trend=ef.at(-1)>es.at(-1)?'UP':'DOWN';
+   let call=0,put=0;if(rv!==null){if(rv<35)call++;if(rv>65)put++}if(trend==='UP')call++;else put++;
+   const side=call>put?'CALL':put>call?'PUT':'WAIT',cls=side.toLowerCase();
+   const time=new Date(rows.at(-1)[0]).toLocaleString();
+   $('feedStatus').innerHTML='<span class="ok">Live candle data received.</span> Source: Binance public API. Last candle: '+time;
+   show(side,cls,`${pair} · ${iv} candles · ${time}`,rv,trend,Math.max(call,put));
+  }else{
+   const rv=+(25+Math.random()*50).toFixed(1),trend=Math.random()>.5?'UP':'DOWN';let call=0,put=0;
+   if(rv<35)call++;if(rv>65)put++;if(trend==='UP')call++;else put++;
+   const side=call>put?'CALL':put>call?'PUT':'WAIT',cls=side.toLowerCase();
+   $('feedStatus').textContent='Demo only: synthetic candles/values. No live market data used.';
+   show(side,cls,`${pair} · ${iv} · ${new Date().toLocaleTimeString()} · SIMULATED`,rv,trend,Math.max(call,put));
+  }
+ }catch(e){$('feedStatus').textContent=e.message;$('signal').className='signal wait';$('signal').textContent='NO SIGNAL';$('status').textContent='FEED UNAVAILABLE';$('signalMeta').textContent='No signal generated because data is missing or unavailable.';$('rsi').textContent='—';$('trend').textContent='—';$('confidence').textContent='—'}
+ finally{$('generate').disabled=false;$('generate').textContent='↻ Fetch data & analyse'}
+}
+$('generate').addEventListener('click',analyse);$('clear').addEventListener('click',()=>{history=[];renderHistory()});
+$('dataMode').addEventListener('change',()=>{$('modePill').textContent=$('dataMode').value==='live'?'LIVE DATA MODE':'DEMO MODE';$('feedStatus').textContent='Tap Fetch data & analyse to update.'});
+$('market').addEventListener('change',()=>{if($('market').value==='otc')$('feedStatus').textContent='OTC is demo-only until an authorized, matching OTC feed is connected.'});
+</script></body></html>
